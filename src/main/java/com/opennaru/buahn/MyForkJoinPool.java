@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/forkjoinpool.do")
+@WebServlet("/forkjoinpool")
 public class MyForkJoinPool extends HttpServlet{
 	
 	@Override
@@ -33,15 +33,21 @@ public class MyForkJoinPool extends HttpServlet{
 		
 		long start_time = System.currentTimeMillis();
 		
-		List<String> urls = Arrays.asList(
-                "http://localhost:8080/ahn-sync-async/responser.do",
-                "http://localhost:8080/ahn-sync-async/responser.do",
-                "http://localhost:8080/ahn-sync-async/responser.do",
-                "http://localhost:8080/ahn-sync-async/responser.do"
-        );  
+		List<String> urls = new ArrayList<String>();
+		
+		if(System.getenv("REMOTE_URL") == null ) {
+			urls.add("http://localhost:8080/ahn-sync-async/responser");
+			urls.add("http://localhost:8080/ahn-sync-async/responser");
+		} else {
+			urls.add("http://" + System.getenv("NEWS_URL"));
+			urls.add("http://" + System.getenv("ACCOUNTS_URL"));
+			urls.add("http://" + System.getenv("WEATHERS_URL"));
+			urls.add("http://" + System.getenv("STOCK_URL"));
+		}
 		
 		// Create a ForkJoinPool with the default parallelism level
         ForkJoinPool pool = ForkJoinPool.commonPool();
+		//ForkJoinPool pool = new ForkJoinPool(2);
 
         // Create a task to send requests to the APIs
         ApiRequestTask task = new ApiRequestTask(urls);
@@ -58,6 +64,7 @@ public class MyForkJoinPool extends HttpServlet{
         }
 
         System.out.println("total duration : " + (end_time-start_time));
+        System.out.println(pool.getPoolSize());
         
         req.setAttribute("type", "Fork Join Pool");
         req.getRequestDispatcher("/result.jsp").forward(req, resp);

@@ -1,6 +1,7 @@
 package com.opennaru.buahn;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -12,7 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/threadpool.do")
+@WebServlet("/threadpool")
 public class MyThreadPool extends HttpServlet {
 
 	@Override
@@ -20,12 +21,17 @@ public class MyThreadPool extends HttpServlet {
 		
 		long start_time = System.currentTimeMillis();
 		
-		List<String> urls = Arrays.asList(
-                "http://localhost:8080/ahn-sync-async/responser.do",
-                "http://localhost:8080/ahn-sync-async/responser.do",
-                "http://localhost:8080/ahn-sync-async/responser.do",
-                "http://localhost:8080/ahn-sync-async/responser.do"
-        );
+		List<String> urls = new ArrayList<String>();
+		
+		if(System.getenv("REMOTE_URL") == null ) {
+			urls.add("http://localhost:8080/ahn-sync-async/responser");
+			urls.add("http://localhost:8080/ahn-sync-async/responser");
+		} else {
+			urls.add("http://" + System.getenv("NEWS_URL"));
+			urls.add("http://" + System.getenv("ACCOUNTS_URL"));
+			urls.add("http://" + System.getenv("WEATHERS_URL"));
+			urls.add("http://" + System.getenv("STOCK_URL"));
+		}
 		
 		ExecutorService executor = Executors.newFixedThreadPool(5);
         for (int i = 0; i < urls.size(); i++) {
