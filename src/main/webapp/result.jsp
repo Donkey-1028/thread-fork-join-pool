@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-Sync <br>
-Async
+${ type } <br>
+Result
 </body>
 </html>

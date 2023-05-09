@@ -41,5 +41,8 @@ public class MyThreadPool extends HttpServlet {
         System.out.println("Finished all threads, ");
         System.out.println("total duration : " + (end_time-start_time));
         
+        req.setAttribute("type", "Thread Pool");
+        req.getRequestDispatcher("/result.jsp").forward(req, resp);
+        
     }
 }
