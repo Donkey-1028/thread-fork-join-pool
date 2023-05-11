@@ -13,7 +13,7 @@ public class Weathers extends HttpServlet{
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		long random = Double.valueOf(Math.random() * 10 * 1000).longValue();
+		long random = Double.valueOf(Math.random() * 10 * 300).longValue();
 		//long random = 10000;
 	    System.out.println("Weathers called, " + "duration: " + random);
 	    try {
@@ -21,6 +21,8 @@ public class Weathers extends HttpServlet{
 	    } catch ( Exception e ) {
 	        e.printStackTrace();
 	    }
+	    req.setAttribute("type", "weathers");
+        req.getRequestDispatcher("/result.jsp").forward(req, resp);
 	}
 
 }

@@ -21,5 +21,8 @@ public class Responser extends HttpServlet{
 	    } catch ( Exception e ) {
 	        e.printStackTrace();
 	    }
+	    
+	    req.setAttribute("type", "responser");
+        req.getRequestDispatcher("/result.jsp").forward(req, resp);
 	}
 }
