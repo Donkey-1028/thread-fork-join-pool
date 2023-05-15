@@ -9,7 +9,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 
 import org.apache.http.HttpResponse;
@@ -46,22 +48,32 @@ public class MyForkJoinPool extends HttpServlet{
 		}
 		
 		// Create a ForkJoinPool with the default parallelism level
-        ForkJoinPool pool = ForkJoinPool.commonPool();
-		//ForkJoinPool pool = new ForkJoinPool(2);
+        //ForkJoinPool pool = ForkJoinPool.commonPool();
+		ForkJoinPool pool = new ForkJoinPool();
 
         // Create a task to send requests to the APIs
-        ApiRequestTask task = new ApiRequestTask(urls);
+        List<ForkJoinTask<List<String>>> tasks = new ArrayList<>();
+        //ApiRequestTask task = new ApiRequestTask(urls);
 
         // Invoke the task and get the results
-        List<String> responses = pool.invoke(task);
+        //List<String> responses = pool.invoke(task);
         
+
+        ApiRequestTask task = new ApiRequestTask(urls);
+        tasks.add(pool.submit(task));
+        
+        try {
+			List<String> response = task.get();
+			System.out.println(response);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         
         long end_time = System.currentTimeMillis();
-        
-        // Print the responses
-        for (String response : responses) {
-            System.out.println(response);
-        }
 
         System.out.println("total duration : " + (end_time-start_time));
         System.out.println(pool.getPoolSize());
