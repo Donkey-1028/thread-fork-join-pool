@@ -11,14 +11,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import javax.servlet.ServletException;
@@ -38,7 +38,7 @@ public class MyForkJoinPool extends HttpServlet{
 		List<String> urls = new ArrayList<String>();
 		
 		if(System.getenv("REMOTE_URL") == null ) {
-			urls.add("http://localhost:8080/ahn-sync-async/responser");
+			urls.add("http://localhost:8080/ahn-sync-async/response");
 			urls.add("http://localhost:8080/ahn-sync-async/responser");
 		} else {
 			urls.add("http://" + System.getenv("NEWS_URL"));
@@ -48,28 +48,28 @@ public class MyForkJoinPool extends HttpServlet{
 		}
 		
 		// Create a ForkJoinPool with the default parallelism level
-        //ForkJoinPool pool = ForkJoinPool.commonPool();
 		ForkJoinPool pool = new ForkJoinPool();
 
-        // Create a task to send requests to the APIs
-        List<ForkJoinTask<List<String>>> tasks = new ArrayList<>();
-        //ApiRequestTask task = new ApiRequestTask(urls);
-
         // Invoke the task and get the results
+        // 메인 스레드도 compute 행위에 사용될 거면 invoke 사용
+		//ApiRequestTask task = new ApiRequestTask(urls);
         //List<String> responses = pool.invoke(task);
         
-
+        // Submit the task
+        // 메인 스레드가 compute 행위를 하지 않으려면 submit 사용
         ApiRequestTask task = new ApiRequestTask(urls);
-        tasks.add(pool.submit(task));
+        pool.submit(task);
         
         try {
-			List<String> response = task.get();
-			System.out.println(response);
+        	// task 결과 받아오기
+        	// get method가 task가 완료될 때 까지 기다린 후 결과 값 반환
+			List<String> responses = task.get();
+			System.out.println(responses);
+			req.setAttribute("result", responses);
+			req.getRequestDispatcher("/portal.jsp").forward(req, resp);
 		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ExecutionException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
         
@@ -77,9 +77,6 @@ public class MyForkJoinPool extends HttpServlet{
 
         System.out.println("total duration : " + (end_time-start_time));
         System.out.println(pool.getPoolSize());
-        
-        req.setAttribute("type", "Fork Join Pool");
-        req.getRequestDispatcher("/result.jsp").forward(req, resp);
 	}
 
     private static class ApiRequestTask extends RecursiveTask<List<String>> {
@@ -111,31 +108,18 @@ public class MyForkJoinPool extends HttpServlet{
             }
         }
 
-// java11 httpclient        
-//        private List<String> sendRequest(String url) {        
-//            HttpClient httpClient = HttpClient.newHttpClient();
-//            HttpRequest httpRequest = null;
-//            try {
-//                httpRequest = HttpRequest.newBuilder()
-//                        .uri(new URI(url))
-//                        .build();
-//            } catch (URISyntaxException e) {
-//                e.printStackTrace();
-//            }
-//            HttpResponse<String> httpResponse = null;
-//            try {
-//                httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-//            } catch (IOException | InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            return Arrays.asList(url + " response: " + httpResponse.statusCode());
-//        }
-
       private List<String> sendRequest(String url) {
 	      try {
+	    	  // timeout set
+	    	  int timeout = 5;
+	    	  RequestConfig config = RequestConfig.custom()
+	    	    .setConnectTimeout(timeout * 1000)
+	    	    .setConnectionRequestTimeout(timeout * 1000)
+	    	    .setSocketTimeout(timeout * 1000).build();
+	    	  
 	    	  URI uri = new URIBuilder(url).build();
 	    	  
-	    	  HttpClient httpClient = HttpClientBuilder.create().build();
+	    	  CloseableHttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
 	    	  
 	    	  HttpGet httpGet = new HttpGet(uri);
 	    	  
@@ -145,11 +129,11 @@ public class MyForkJoinPool extends HttpServlet{
               if (statusCode == HttpStatus.SC_OK) {
                   return Arrays.asList(uri + " response: " + statusCode);
               } else {
-                  throw new RuntimeException("Unexpected HTTP status code: " + statusCode);
+                  return Arrays.asList(uri + " Unexpected HTTP status code: " + statusCode);
               }
           } catch (IOException | URISyntaxException e) {
-              throw new RuntimeException("Error while executing API request: " + e.getMessage(), e);
-              
+              e.printStackTrace();
+              return null;
           }
 	   }
     }

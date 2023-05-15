@@ -13,7 +13,7 @@ public class Responser extends HttpServlet{
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		long random = Double.valueOf(Math.random() * 10 * 1000).longValue();
+		long random = Double.valueOf(Math.random() * 10 * 300).longValue();
 		//long random = 10000;
 	    System.out.println("responser called, " + "duration: " + random);
 	    try {
