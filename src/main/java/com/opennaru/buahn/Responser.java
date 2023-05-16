@@ -22,7 +22,7 @@ public class Responser extends HttpServlet{
 	        e.printStackTrace();
 	    }
 	    
-	    req.setAttribute("type", "responser");
+	    req.setAttribute("result", "responser 호출 성공!!");
         req.getRequestDispatcher("/result.jsp").forward(req, resp);
 	}
 }

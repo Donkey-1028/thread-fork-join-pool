@@ -21,7 +21,7 @@ public class Accounts extends HttpServlet{
 	    } catch ( Exception e ) {
 	        e.printStackTrace();
 	    }
-	    req.setAttribute("type", "accounts");
+	    req.setAttribute("result", "accounts 호출 성공 !!");
         req.getRequestDispatcher("/result.jsp").forward(req, resp);
 	}
 }

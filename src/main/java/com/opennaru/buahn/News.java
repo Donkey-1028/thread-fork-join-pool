@@ -20,7 +20,7 @@ public class News extends HttpServlet{
 	    } catch ( Exception e ) {
 	        e.printStackTrace();
 	    }
-	    req.setAttribute("type", "news");
+	    req.setAttribute("result", "news 호출 성공 !!");
         req.getRequestDispatcher("/result.jsp").forward(req, resp);
 	}
 }

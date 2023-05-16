@@ -15,17 +15,8 @@ ArrayList<String> results = (ArrayList)request.getAttribute("result");
 <body>
 <% 
 for(String result : results){
-	if(result.indexOf("200") == -1){
-%> 
-<strong style="color: #FF0000">API Request URL : <%= result %></strong>	
-<%
-	} else {
 %>
 API Request URL : <%= result %>	
-<%
-	}
-%>
-<br>
 <% 
 } 
 %>

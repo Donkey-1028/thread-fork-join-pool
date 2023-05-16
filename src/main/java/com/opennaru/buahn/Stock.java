@@ -21,7 +21,7 @@ public class Stock extends HttpServlet{
 	    } catch ( Exception e ) {
 	        e.printStackTrace();
 	    }
-	    req.setAttribute("type", "stock");
+	    req.setAttribute("result", "stock 호출 성공!!");
         req.getRequestDispatcher("/result.jsp").forward(req, resp);
 	}
 }
