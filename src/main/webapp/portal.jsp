@@ -13,12 +13,7 @@ ArrayList<String> results = (ArrayList)request.getAttribute("result");
 <title>Portal Page</title>
 </head>
 <body>
-<% 
-for(String result : results){
-%>
-API Request URL : <%= result %>	
-<% 
-} 
-%>
+${test01} <br/>
+${test02}
 </body>
 </html>
