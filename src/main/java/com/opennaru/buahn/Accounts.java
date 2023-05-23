@@ -21,7 +21,7 @@ public class Accounts extends HttpServlet{
 	    } catch ( Exception e ) {
 	        e.printStackTrace();
 	    }
-	    req.setAttribute("result", "accounts 호출 성공 !!");
+	    req.setAttribute("result", "안병욱 프로가 로그인");
         req.getRequestDispatcher("/result.jsp").forward(req, resp);
 	}
 }

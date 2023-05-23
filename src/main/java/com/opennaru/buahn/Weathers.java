@@ -21,7 +21,7 @@ public class Weathers extends HttpServlet{
 	    } catch ( Exception e ) {
 	        e.printStackTrace();
 	    }
-	    req.setAttribute("type", "weathers");
+	    req.setAttribute("result", "오픈마루는 맑음");
         req.getRequestDispatcher("/result.jsp").forward(req, resp);
 	}
 

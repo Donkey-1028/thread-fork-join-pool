@@ -17,8 +17,10 @@ public class Review extends HttpServlet{
 		String error_raised = System.getenv("ERROR_RAISED");
 		String version = System.getenv("VERSION");
 		
-		if(error_raised.equals("true")) {
-			resp.sendError(500);
+		if(error_raised != null) {
+			if(error_raised.equals("true") == true) {
+				resp.sendError(500);
+			}
 		} else {
 			long random = Double.valueOf(Math.random() * 10 * 300).longValue();
 			//long random = 10000;
@@ -28,11 +30,13 @@ public class Review extends HttpServlet{
 		    } catch ( Exception e ) {
 		        e.printStackTrace();
 		    }
-		    if(version.equals("v1")) {
-		    	req.setAttribute("result", "review v1 호출 성공!!");
-		    } else if (version.equals("v2")) {
-		    	req.setAttribute("result", "review v2 호출 성공!!");
-			}
+		    if(version != null) {
+		    	if(version.equals("v1")) {
+		    		req.setAttribute("result", "OPENMARU APM 리뷰");
+		    	} else if (version.equals("v2")) {
+			    	req.setAttribute("result", "OPENMARU Cluster 리뷰");
+				}
+		    } 
 		    
 	        req.getRequestDispatcher("/result.jsp").forward(req, resp);
 		}
