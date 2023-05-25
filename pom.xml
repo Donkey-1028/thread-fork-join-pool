@@ -3,7 +3,7 @@
   <groupId>ahn-sync-async</groupId>
   <artifactId>ahn-sync-async</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
   <dependencies>
     <dependency>
       <groupId>commons-httpclient</groupId>
