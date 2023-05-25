@@ -3,7 +3,7 @@
   <groupId>ahn-sync-async</groupId>
   <artifactId>ahn-sync-async</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   <dependencies>
     <dependency>
       <groupId>commons-httpclient</groupId>
@@ -27,15 +27,15 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>11</maven.compiler.release>
+  </properties>
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
